@@ -1,52 +1,89 @@
 package com.Employee.Management;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.Scanner;
 
-public class EmployeeService {
+public class Main {
 
-    ArrayList<Employee> employees = new ArrayList<>();
+    public static void main(String[] args) {
 
-    // Add Employee
-    public void addEmployee(Employee emp) {
+        Scanner sc = new Scanner(System.in);
 
-        employees.add(emp);
+        EmployeeService service = new EmployeeService();
 
-        System.out.println("Employee added successfully");
-    }
+        while (true) {
 
-    // View Employees
-    public void viewEmployees() {
+            System.out.println("\n===== EMPLOYEE MANAGEMENT SYSTEM =====");
 
-        if (employees.isEmpty()) {
+            System.out.println("1. Add Employee");
+            System.out.println("2. View Employees");
+            System.out.println("3. Search Employee");
+            System.out.println("4. Exit");
 
-            System.out.println("No employees found");
-            return;
-        }
+            System.out.print("Enter choice : ");
 
-        for (Employee e : employees) {
+            int choice = sc.nextInt();
 
-            e.display();
-        }
-    }
+            switch (choice) {
 
-  
-    public Employee searchEmployee(int id)
-            throws EmployeeNotFoundException {
+                case 1:
 
-        Optional<Employee> employee = employees.stream()
-                .filter(e -> e.getId() == id)
-                .findFirst();
+                    System.out.print("Enter Employee ID : ");
+                    int id = sc.nextInt();
 
-        if (employee.isPresent()) {
+                    sc.nextLine();
 
-            return employee.get();
-        }
+                    System.out.print("Enter Employee Name : ");
+                    String name = sc.nextLine();
 
-        else {
+                    System.out.print("Enter Employee Salary : ");
+                    double salary = sc.nextDouble();
 
-            throw new EmployeeNotFoundException(
-                    "Employee not found");
+                    Employee emp =
+                            new Employee(id, name, salary);
+
+                    service.addEmployee(emp);
+
+                    break;
+
+                case 2:
+
+                    service.viewEmployees();
+
+                    break;
+
+                case 3:
+
+                    System.out.print("Enter Employee ID to Search : ");
+
+                    int searchId = sc.nextInt();
+
+                    try {
+
+                        Employee e =
+                                service.searchEmployee(searchId);
+
+                        System.out.println("\nEmployee Found");
+                        e.display();
+
+                    } catch (EmployeeNotFoundException ex) {
+
+                        System.out.println(ex.getMessage());
+                    }
+
+                    break;
+
+                case 4:
+
+                    System.out.println("Program Ended");
+
+                    sc.close();
+
+                    System.exit(0);
+
+                default:
+
+                    System.out.println("Invalid Choice");
+            }
         }
     }
 }
