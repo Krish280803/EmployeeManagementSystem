@@ -1,91 +1,52 @@
 package com.Employee.Management;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Optional;
 
 public class EmployeeService {
 
-    private List<Employee> employees = new ArrayList<>();
+    ArrayList<Employee> employees = new ArrayList<>();
 
     // Add Employee
-    public void addEmployee(Employee employee) {
-        employees.add(employee);
-        System.out.println("Employee Added Successfully.");
+    public void addEmployee(Employee emp) {
+
+        employees.add(emp);
+
+        System.out.println("Employee added successfully");
     }
 
-    // View All Employees
+    // View Employees
     public void viewEmployees() {
+
         if (employees.isEmpty()) {
-            System.out.println("No Employees Found.");
+
+            System.out.println("No employees found");
             return;
         }
 
-        employees.forEach(System.out::println);
+        for (Employee e : employees) {
+
+            e.display();
+        }
     }
 
-    // Search Employee using Optional
-    public Optional<Employee> searchEmployee(int id) {
+  
+    public Employee searchEmployee(int id)
+            throws EmployeeNotFoundException {
 
-        return employees.stream()
-                .filter(emp -> emp.getId() == id)
+        Optional<Employee> employee = employees.stream()
+                .filter(e -> e.getId() == id)
                 .findFirst();
-    }
 
-    // Update Salary
-    public void updateSalary(int id, double salary)
-            throws EmployeeNotFoundException {
+        if (employee.isPresent()) {
 
-        Employee employee = searchEmployee(id)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee Not Found"));
+            return employee.get();
+        }
 
-        employee.setSalary(salary);
+        else {
 
-        System.out.println("Salary Updated Successfully.");
-    }
-
-    // Delete Employee
-    public void deleteEmployee(int id)
-            throws EmployeeNotFoundException {
-
-        Employee employee = searchEmployee(id)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee Not Found"));
-
-        employees.remove(employee);
-
-        System.out.println("Employee Deleted Successfully.");
-    }
-
-    // Stream API Example
-    public void employeesWithHighSalary() {
-
-        List<Employee> highSalaryEmployees = employees.stream()
-                .filter(emp -> emp.getSalary() > 50000)
-                .collect(Collectors.toList());
-
-        System.out.println("\nEmployees with Salary > 50000");
-
-        highSalaryEmployees.forEach(System.out::println);
-    }
-
-    // Sort Employees by Salary
-    public void sortEmployeesBySalary() {
-
-        List<Employee> sortedList = employees.stream()
-                .sorted(Comparator.comparing(Employee::getSalary))
-                .collect(Collectors.toList());
-
-        System.out.println("\nEmployees Sorted by Salary");
-
-        sortedList.forEach(System.out::println);
-    }
-
-    // Count Employees
-    public void countEmployees() {
-
-        long count = employees.stream().count();
-
-        System.out.println("\nTotal Employees: " + count);
+            throw new EmployeeNotFoundException(
+                    "Employee not found");
+        }
     }
 }
