@@ -1,89 +1,52 @@
 package com.Employee.Management;
 
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Optional;
 
-public class Main {
+public class EmployeeService {
 
-    public static void main(String[] args) {
+    ArrayList<Employee> employees = new ArrayList<>();
 
-        Scanner sc = new Scanner(System.in);
+    // Add Employee
+    public void addEmployee(Employee emp) {
 
-        EmployeeService service = new EmployeeService();
+        employees.add(emp);
 
-        while (true) {
+        System.out.println("Employee added successfully");
+    }
 
-            System.out.println("\n===== EMPLOYEE MANAGEMENT SYSTEM =====");
+    // View Employees
+    public void viewEmployees() {
 
-            System.out.println("1. Add Employee");
-            System.out.println("2. View Employees");
-            System.out.println("3. Search Employee");
-            System.out.println("4. Exit");
+        if (employees.isEmpty()) {
 
-            System.out.print("Enter choice : ");
+            System.out.println("No employees found");
+            return;
+        }
 
-            int choice = sc.nextInt();
+        for (Employee e : employees) {
 
-            switch (choice) {
+            e.display();
+        }
+    }
 
-                case 1:
+  
+    public Employee searchEmployee(int id)
+            throws EmployeeNotFoundException {
 
-                    System.out.print("Enter Employee ID : ");
-                    int id = sc.nextInt();
+        Optional<Employee> employee = employees.stream()
+                .filter(e -> e.getId() == id)
+                .findFirst();
 
-                    sc.nextLine();
+        if (employee.isPresent()) {
 
-                    System.out.print("Enter Employee Name : ");
-                    String name = sc.nextLine();
+            return employee.get();
+        }
 
-                    System.out.print("Enter Employee Salary : ");
-                    double salary = sc.nextDouble();
+        else {
 
-                    Employee emp =
-                            new Employee(id, name, salary);
-
-                    service.addEmployee(emp);
-
-                    break;
-
-                case 2:
-
-                    service.viewEmployees();
-
-                    break;
-
-                case 3:
-
-                    System.out.print("Enter Employee ID to Search : ");
-
-                    int searchId = sc.nextInt();
-
-                    try {
-
-                        Employee e =
-                                service.searchEmployee(searchId);
-
-                        System.out.println("\nEmployee Found");
-                        e.display();
-
-                    } catch (EmployeeNotFoundException ex) {
-
-                        System.out.println(ex.getMessage());
-                    }
-
-                    break;
-
-                case 4:
-
-                    System.out.println("Program Ended");
-
-                    sc.close();
-
-                    System.exit(0);
-
-                default:
-
-                    System.out.println("Invalid Choice");
-            }
+            throw new EmployeeNotFoundException(
+                    "Employee not found");
         }
     }
 }
